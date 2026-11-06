@@ -1,0 +1,21 @@
+
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+
+website:
+  title: "N400 ERP Analysis Report"
+
+format:
+  html:
+    theme: flatly
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    embed-resources: true
+
+execute:
+  warning: false
+  message: false

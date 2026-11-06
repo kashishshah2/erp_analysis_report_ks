@@ -1,329 +1,581 @@
+
 ---
-title: "N400 ERP Analysis Report"
+title: "The N400: Semantic Relatedness in Word-Pair Processing"
 author: "Kashish Shah"
-date: 02/11/2026
-format: 
-    html:
-        embed-resources: true
-        toc: true
-        toc-depth: 3
-        code-fold: true
-        theme: flatly
+date: "2026-11-02"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    theme: flatly
 execute:
-    eval: true
-    warning: false
-    message: false
-
-bibliography: "erp_report.bib"
+  eval: true
+  warning: false
+  message: false
+bibliography: erp_report.bib
 ---
 
-## Setup
+## Introduction
 
-```{python}
-from pathlib import Path
-from mini_mne import SimpleRaw, SimpleEpoch, grand_average, plot_evokeds
-from scripts.preproc import preprocess
+### Characteristics and discovery of the N400
 
-```
+The N400 is a negative-going event-related potential (ERP) associated with the processing of meaningful stimuli. It typically develops approximately 200–300 ms after stimulus onset and is prominent around 400 ms, although its timing and duration vary with the task and stimulus. For visually presented words, the effect commonly has a broad centroparietal distribution, with substantial activity at central and parietal electrodes. Crucially, the N400 is generally described in terms of amplitude differences between conditions, rather than the presence of a unique negative peak in every waveform [@kutas2011]. In the ERP CORE word-pair paradigm, the representative electrode is CPz and the recommended measurement window is 300–500 ms after target-word onset [@kappenman2021].
 
-```{python}
-# Specify the required paths for your analysis
-# Note that we now include a folder for saving preprocessed data
-# Specify the required paths for your analysis
-RAW_PATH = Path("data")
-PROCESSED_PATH = Path("data/processed")
+The component was first reported by Kutas and Hillyard in 1980. Participants read sentences that ended with either contextually appropriate words or semantically anomalous completions. Unexpected endings elicited a larger negative response around 400 ms, demonstrating that scalp-recorded brain activity was sensitive to linguistic meaning rather than only the physical characteristics of a stimulus [@kutas1980]. This discovery established ERPs as a valuable method for investigating the time course of language comprehension.
 
-PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
-raw_files = list(RAW_PATH.glob("*_raw.fif.gz"))
+### Conditions that elicit the N400
 
-print(f"Found {len(raw_files)} EEG files")
-Introduction
-The N400 is a negative-going ERP component that typically peaks around 400 milliseconds after the onset of a stimulus. It is most prominently observed at central and parietal electrode sites (Cz, Pz) and is characterised by its centroparietal topographic distribution.
+Subsequent research established that N400 amplitude varies systematically with semantic context. Words that are difficult to relate to preceding information tend to elicit larger negative responses than words supported by context. The effect occurs in sentences, isolated word pairs, and other meaningful stimulus sequences; it is not restricted to obvious grammatical or semantic violations [@kutas2011].
 
-Discovery and Basic Characteristics
-The N400 was first described by @kutas1980 in a landmark study that examined brain responses to semantically incongruent words in sentences. In their seminal work, Kutas and Hillyard presented participants with sentences ending in either semantically appropriate words or unexpected words. They observed a large negative deflection peaking around 400ms for semantically incongruent endings, hence the name "N400."
+In semantic priming experiments, a target such as *butter* following *bread* generally elicits a smaller N400 than the same target following an unrelated prime. Context can facilitate the processing of a word even when both alternatives are meaningful and grammatically acceptable. N400-like effects have also been investigated with pictures, environmental sounds and other conceptually meaningful stimuli, supporting the view that the component is not exclusively a response to written language [@lau2008; @kutas2011].
 
-Key characteristics of the N400:
+### Functional significance and theoretical debate
 
-Polarity: Negative
-Latency: 250-500ms post-stimulus (peaks ~400ms)
-Topography: Maximal at centroparietal electrodes (Cz, Pz)
-Amplitude: Typically 5-8 µV in linguistic contexts
-Functional Significance
-The N400 has been extensively studied as an index of semantic processing. Research has demonstrated that the N400 amplitude varies with:
+The N400 is widely interpreted as an electrophysiological index of meaning-related processing, but the precise cognitive operation it reflects remains debated. One account emphasises access to or activation of semantic representations: related context preactivates relevant information, reducing the processing required when the target appears. Another emphasises the ease of integrating the target into an evolving representation of context. These interpretations are difficult to distinguish because semantic access, contextual expectations and integration frequently covary in natural language [@lau2008].
 
-Semantic incongruity: Larger N400 for unexpected or incongruent words
-Cloze probability: Words with lower probability of completing a sentence elicit larger N400s [@kutas1984]
-Semantic relatedness: Unrelated word pairs elicit larger N400s than related pairs [@bentin1985]
-Controversies
-While the N400 is widely accepted as a measure of semantic processing, its precise functional interpretation remains debated:
+More recent frameworks treat N400 amplitude as sensitive to the degree of contextual support for a stimulus, without equating the component with a single, isolated stage of comprehension [@kutas2011].
 
-Some researchers argue it reflects lexical access processes
-Others propose it indexes semantic integration in context
-Recent work suggests it may reflect prediction mechanisms in language processing [@kuperberg2016]
+The present report examines the N400 using the ERP CORE word-pair judgement task. Participants saw related and unrelated prime–target pairs, allowing comparison of target-locked ERPs. Based on previous research, unrelated targets are expected to elicit a more negative-going waveform than related targets at CPz during the 300–500 ms measurement window [@kappenman2021].
 
 ## Methods
 
-Complete the following subsections using the information from @kappenman2021. Don't forget to mention that the data are from the ERP CORE resource under a Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). 
-
 ### Participants
 
-40 neurologically healthy adults (20 female, 20 male) participated in the study. Participants ranged in age from 18 to 30 years (mean age = 21.5 years, SD = 2.6). All participants were right-handed, had normal or corrected-to-normal vision, and were native English speakers. Participants gave informed consent prior to the study. The data are from the ERP CORE resource [@kappenman2021] under a Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+The ERP CORE resource originally included 40 neurotypical young adults from the University of California, Davis community (25 female, 15 male; mean age 21.5 years, SD = 2.87; age range 18–30 years). Thirty-eight participants were right-handed.
+
+Participants reported native English competence, normal colour perception, normal or corrected-to-normal vision and no history of neurological injury or disease. All provided informed consent.
+
+The original N400 analysis retained 39 participants after task-specific exclusions, including criteria concerning artefact-contaminated trials, response accuracy and the number of trials remaining in each condition [@kappenman2021].
+
+The number of participants included in the present reanalysis will be determined from the available dataset and retained participant averages.
+
+The dataset was made available through the ERP CORE resource under the Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) licence.
 
 ### Procedure
 
-Participants completed a semantic judgement task in which they were presented with pairs of words. The critical manipulation involved the semantic relationship between word pairs:
+The N400 was elicited using a semantic word-pair judgement task. Each trial presented a red prime word followed by a green target word. Participants indicated by button press whether the target was semantically related or unrelated to the prime.
 
-Related condition: Semantically related word pairs (e.g., "bread - butter")
-Unrelated condition: Semantically unrelated word pairs (e.g., "bread - doctor")
-Each trial consisted of:
+The experiment contained 120 trials: 60 related and 60 unrelated, organised into blocks of 20. Each target appeared in both a related and an unrelated context across the experiment.
 
-Fixation cross (500ms)
-Prime word (200ms)
-Inter-stimulus interval (300ms)
-Target word (displayed until response)
-Participants indicated whether each target word was a real word or a non-word via button press.
+The prime was displayed for 200 ms, followed by an interstimulus interval of 900–1100 ms. The target was displayed for 200 ms, followed by an intertrial interval of 1400–1600 ms.
+
+The N400 analysis was time-locked to the onset of the target word rather than the prime word [@kappenman2021].
 
 ### EEG recording
 
-EEG was recorded using the following parameters [@kappenman2021]:
+Continuous EEG was acquired using a BioSemi ActiveTwo system with active electrodes positioned in an elastic cap.
 
-Amplifier: BrainVision actiCHamp
-Cap: Brain Products actiCAP
-Electrode positions: 30 active electrodes placed according to the 10-20 system
-CMS/DRL electrodes: Located at P9/P10 (used as reference)
-EOG electrodes:
-Horizontal EOG: Lateral to each eye
-Vertical EOG: Above and below the left eye
-Filter parameters:
-Online: DC to 80 Hz
-Offline: 0.1 Hz (high-pass) to 30 Hz (low-pass)
+Thirty scalp electrodes were positioned according to the international 10–20 system: Fp1, F3, F7, FC3, C3, C5, P3, P7, P9, PO7, PO3, O1, Oz, Pz, CPz, Fp2, Fz, F4, F8, FC4, FCz, Cz, C4, C6, P4, P8, P10, PO8, PO4 and O2.
+
+The common mode sense (CMS) electrode was positioned at PO1 and the driven right leg (DRL) electrode at PO2.
+
+Horizontal electrooculography (EOG) was recorded using electrodes positioned lateral to both eyes. Vertical EOG was recorded below the right eye and combined with Fp2 offline.
+
+Signals were acquired at a sampling frequency of 1024 Hz with 24-bit resolution. A fifth-order sinc acquisition low-pass filter was applied, with a half-power cutoff of 204.8 Hz.
+
+EEG referencing was performed offline [@kappenman2021].
 
 ### Analysis parameters
 
-Choose these parameters appropriate for the component that you are analysing. Use those recommended by @kappenman2021; see their Table 1. This holds for all parameters except for the filter parameters; for these, you can stick to the example parameters provided below.
-Describe the parameters in this section and also modify the code accordingly
+The present analysis uses the supplied mini_mne preprocessing pipeline. The EEG data are re-referenced to the average of P9 and P10, used as proxies for the mastoid electrodes.
+
+A high-pass filter of 0.1 Hz and low-pass filter of 30 Hz are applied, as permitted by the assessment instructions.
+
+Continuous EEG recordings are segmented into epochs extending from 200 ms before to 800 ms after target-word onset.
+
+Baseline correction is performed using the 200 ms prestimulus interval.
+
+The supplied artefact rejection thresholds are 150 µV for EEG and 250 µV for EOG channels.
+
+ERPs are averaged separately for semantically related and unrelated target words for each participant. Participant averages are subsequently combined to calculate grand-average waveforms for each condition.
+
+The representative electrode for the N400 is CPz, and the analysis window is 300–500 ms after target-word onset [@kappenman2021].
+
+The simplified teaching pipeline does not necessarily reproduce every procedure in the original ERP CORE study, including ICA-based ocular correction, individualised artefact rejection and behavioural exclusions. These differences should be considered when interpreting the results.
 
 #### Preprocessing parameters
 
+```{python}
 FILTER_SETTINGS = {
-    "low_cutoff": 0.1,   # High-pass filter at 0.1 Hz
-    "high_cutoff": 30.0  # Low-pass filter at 30 Hz
+    "low_cutoff": 0.1,
+    "high_cutoff": 30.0
 }
 
-# Reference to averaged mastoids (P9/P10 as proxy)
 REFERENCE = ["P9", "P10"]
+```
 
 #### Epoching parameters
 
-# N400 specific parameters based on Kappenman et al. (2021)
-TMIN = -0.2    # 200ms pre-stimulus baseline
-TMAX = 0.8     # 800ms post-stimulus
+```{python}
+TMIN = -0.2
+TMAX = 0.8
 
-BASELINE = (-0.2, 0)  # 200ms pre-stimulus baseline correction
+BASELINE = (-0.2, 0)
 
-# N400 conditions: related vs unrelated word pairs
-CONDITIONS = ["stimulus/unrelated", "stimulus/related"]
+# Check exact event names against your dataset
+CONDITIONS = [
+    "stimulus/target_word/related",
+    "stimulus/target_word/unrelated"
+]
 
-# Artifact rejection thresholds
+
 REJECT = {
-    "eeg": 150e-6,   # 150 µV for EEG channels
-    "eog": 250e-6    # 250 µV for EOG channels
+    "eeg": 150e-6,
+    "eog": 250e-6
 }
-
 ```
 
 ## Data analysis
 
+### Setup
+
+```{python}
+from pathlib import Path
+
+from mini_mne import (
+    SimpleRaw,
+    SimpleEpoch,
+    grand_average,
+    plot_evokeds
+)
+
+from scripts.preproc import preprocess
+
+RAW_PATH = Path("data/raw")
+PROCESSED_PATH = Path("data/processed")
+
+PROCESSED_PATH.mkdir(
+    parents=True,
+    exist_ok=True
+)
+
+raw_files = sorted(
+    RAW_PATH.glob("*_raw.fif.gz")
+)
+
+print(f"Found {len(raw_files)} raw EEG files")
+
+if not raw_files:
+    raise FileNotFoundError(
+        "No EEG files found in data/"
+    )
+
+# Check event labels in the first recording
+probe = SimpleRaw(raw_files[0])
+
+probe_events, probe_event_id = probe.get_events()
+
+print("Available events:", probe_event_id)
+
+# Check whether N400 condition prefixes exist
+missing = [
+    cond for cond in CONDITIONS
+    if not any(
+        label.startswith(cond + "/")
+        for label in probe_event_id
+    )
+]
+
+if missing:
+    raise ValueError(
+        f"N400 conditions not found: {missing}. "
+        "Check the event dictionary and update CONDITIONS."
+    )
+    print("N400 target conditions found!")
+```
+
 ### Preprocessing
 
+```{python}
+# Find all EEG files
+raw_files = sorted(
+    RAW_PATH.glob("*_raw.fif.gz")
+)
 
-#| eval: true
-#| output: true
+print(f"Found {len(raw_files)} EEG files")
 
-# Find EEG files
-raw_files = sorted(RAW_PATH.glob("*_raw.fif.gz"))
-print(f"Found {len(raw_files)} EEG files", flush=True)
-
+# Preprocess all participants
 for raw_file in raw_files:
-    print(f"\nProcessing: {raw_file.name}", flush=True)
-    
-    # Extract subject ID
-    subj_ID = raw_file.name.split("_")[0]
-    
-    # Define output path
-    output_file = PROCESSED_PATH / f"{subj_ID}_raw.fif.gz"
-    
-    # Skip if already processed
+
+    print(
+        f"Starting: {raw_file.name}",
+        flush=True
+    )
+
+    # Extract participant ID
+    subj_ID = raw_file.name.removesuffix(
+        "_raw.fif.gz"
+    )
+
+    # Define processed output filename
+    output_file = (
+        PROCESSED_PATH / f"{subj_ID}_raw.fif.gz"
+    )
+
+    # Skip files that were already processed
     if output_file.exists():
-        print(f"Already processed, skipping: {raw_file.name}", flush=True)
-        continue
-    
-    try:
-        # Read raw file
-        raw = SimpleRaw(raw_file)
-        print("EEG file loaded successfully", flush=True)
-        
-        # Preprocess
-        processed = preprocess(
-            raw,
-            reref_params=REFERENCE,
-            filter_low_cutoff=FILTER_SETTINGS["low_cutoff"],
-            filter_high_cutoff=FILTER_SETTINGS["high_cutoff"]
+        print(
+            f"Already processed: {output_file.name}"
         )
-        print("Preprocessing completed", flush=True)
-        
-        # Create processed directory if needed
-        PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
-        
-        # Save processed data
-        processed.save(
-            output_file,
-            overwrite=True
-        )
-        print(f"Saved: {output_file.name}", flush=True)
-        
-    except Exception as e:
-        print(f"Error processing {raw_file.name}: {e}", flush=True)
         continue
 
-print("\nPreprocessing complete!", flush=True)
+    # Load raw recording
+    raw = SimpleRaw(raw_file)
 
+    print(
+        "EEG file loaded successfully",
+        flush=True
+    )
+
+    # Preprocess the EEG recording
+    processed = preprocess(
+        raw,
+        reref_params=REFERENCE,
+        filter_low_cutoff=FILTER_SETTINGS["low_cutoff"],
+        filter_high_cutoff=FILTER_SETTINGS["high_cutoff"]
+    )
+
+    print(
+        "Preprocessing completed",
+        flush=True
+    )
+
+    # Save processed recording
+    processed.save(
+        output_file,
+        overwrite=True
+    )
+
+    print(
+        f"Finished: {raw_file.name}",
+        flush=True
+    )
 ```
 
-### Epoching and averaging
+#
+## Epoching and averaging
 
-#| eval: true
-#| output: true
+```{python}
+# Define the two N400 conditions
+CONDITIONS = [
+    "stimulus/target_word/related",
+    "stimulus/target_word/unrelated"
+]
 
-# Find EEG files
-raw_files = sorted(RAW_PATH.glob("*_raw.fif.gz"))
-print(f"Found {len(raw_files)} EEG files", flush=True)
+# Initialise participant average lists
+ss_avs = {cond: [] for cond in CONDITIONS}
 
-for raw_file in raw_files:
-    print(f"\nProcessing: {raw_file.name}", flush=True)
-    
-    # Extract subject ID
-    subj_ID = raw_file.name.split("_")[0]
-    
-    # Define output path
-    output_file = PROCESSED_PATH / f"{subj_ID}_raw.fif.gz"
-    
-    # Skip if already processed
-    if output_file.exists():
-        print(f"Already processed, skipping: {raw_file.name}", flush=True)
+# Find processed EEG files
+processed_files = sorted(
+    PROCESSED_PATH.glob("*_raw.fif.gz")
+)
+
+print(f"Processed files: {len(processed_files)}")
+
+if not processed_files:
+    raise FileNotFoundError(
+        "No processed EEG files found"
+    )
+
+# Define original N400 event labels
+related_labels = [
+    "stimulus/target_word/related/list1",
+    "stimulus/target_word/related/list2"
+]
+
+unrelated_labels = [
+    "stimulus/target_word/unrelated/list1",
+    "stimulus/target_word/unrelated/list2"
+]
+
+for processed_file in processed_files:
+
+    print(f"Epoching: {processed_file.name}")
+
+    processed = SimpleRaw(processed_file)
+
+    events, event_id = processed.get_events()
+
+    # Check event labels
+    required_labels = related_labels + unrelated_labels
+
+    missing = [
+        label for label in required_labels
+        if label not in event_id
+    ]
+
+    if missing:
+        print(
+            f"Skipping {processed_file.name}: "
+            f"missing {missing}"
+        )
         continue
+
+    # Copy events to avoid modifying originals
+    combined_events = events.copy()
+
+    related_codes = [
+        event_id[label] for label in related_labels
+    ]
+
+    unrelated_codes = [
+        event_id[label] for label in unrelated_labels
+    ]
+
+    # Combine both related lists
+    # and both unrelated lists
+    for code in related_codes:
+        combined_events[
+            combined_events[:, 2] == code, 2
+        ] = 101
+
+    for code in unrelated_codes:
+        combined_events[
+            combined_events[:, 2] == code, 2
+        ] = 102
+
+    combined_event_id = {
+        "stimulus/target_word/related": 101,
+        "stimulus/target_word/unrelated": 102
+    }
+
+    # Create epochs
+    epochs = SimpleEpoch(
+        processed,
+        combined_events,
+        combined_event_id,
+        tmin=TMIN,
+        tmax=TMAX,
+        baseline=BASELINE,
+        reject=REJECT
+    )
+
+    # Average each condition
     
+# Average each condition
+participant_averages = {}
+participant_valid = True
+
+for cond in CONDITIONS:
+
     try:
-        # Read raw file
-        raw = SimpleRaw(raw_file)
-        print("EEG file loaded successfully", flush=True)
-        
-        # Preprocess
-        processed = preprocess(
-            raw,
-            reref_params=REFERENCE,
-            filter_low_cutoff=FILTER_SETTINGS["low_cutoff"],
-            filter_high_cutoff=FILTER_SETTINGS["high_cutoff"]
-        )
-        print("Preprocessing completed", flush=True)
-        
-        # Create processed directory if needed
-        PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
-        
-        # Save processed data
-        processed.save(
-            output_file,
-            overwrite=True
-        )
-        print(f"Saved: {output_file.name}", flush=True)
-        
-    except Exception as e:
-        print(f"Error processing {raw_file.name}: {e}", flush=True)
-        continue
+        condition_epochs = epochs[cond]
 
-print("\nPreprocessing complete!", flush=True)
+        print(f"Checking condition: {cond}")
 
+        # Force rejection checks where supported
+        n_epochs = len(condition_epochs)
+
+        print(f"Usable epochs: {n_epochs}")
+
+        if n_epochs == 0:
+            print(
+                f"No usable epochs for {cond} "
+                f"in {processed_file.name}"
+            )
+            participant_valid = False
+            break
+
+        av = condition_epochs.average()
+        participant_averages[cond] = av
+
+    except RuntimeError as e:
+        print(
+            f"Epoch averaging failed for "
+            f"{processed_file.name}, {cond}: {e}"
+        )
+        participant_valid = False
+        break
+
+# Only include participants with both conditions
+if participant_valid:
+
+    for cond in CONDITIONS:
+        ss_avs[cond].append(
+            participant_averages[cond]
+        )
+
+    print(
+        f"Participant included: {processed_file.name}"
+    )
+
+else:
+    print(
+        f"Participant excluded: {processed_file.name}"
+    )
+combined_event_id = {
+    "stimulus/target_word/related": 101,
+    "stimulus/target_word/unrelated": 102
+}
+
+# Count target events before artefact rejection
+for cond, code in combined_event_id.items():
+
+    n_events = (
+        combined_events[:, 2] == code
+    ).sum()
+
+    print(
+        f"{processed_file.name} - "
+        f"{cond}: {n_events} target events"
+    )
+
+
+# Report number of participant averages
+for cond in CONDITIONS:
+
+    print(
+        f"{cond}: "
+        f"{len(ss_avs[cond])} participant averages"
+    )
 ```
 
-### Grand average
+## Grand average
 
-#| eval: true
-#| output: false
-
-# Compute grand averages for each condition
+```{python}
+# Create grand averages
 grand_avs = {}
 
 for cond in CONDITIONS:
-    if len(ss_avs[cond]) == 0:
-        print(f"Warning: No data available for condition: {cond}")
-        continue
-    
-    print(
-        f"Computing grand average for {cond}: "
-        f"n={len(ss_avs[cond])} participants"
-    )
-    
-    grand = grand_average(ss_avs[cond])
-    grand_avs[cond] = grand
 
-print("Grand averages computed successfully!")
+    if len(ss_avs[cond]) == 0:
+        raise ValueError(
+            f"No participant averages for {cond}"
+        )
+
+    grand_avs[cond] = grand_average(
+        ss_avs[cond]
+    )
+
+    print(f"Grand average calculated: {cond}")
+
+print("Grand averaging completed!")
 ```
 
 ## Results
 
-Grand Average: N400 Effect
-#| eval: true
-#| output: true
+### Grand average N400 effect
 
-# N400 analysis parameters based on Kappenman et al. (2021)
-# Representative electrode: Pz (centroparietal maximum)
-selected_electrode = "Pz"
+```{python}
+selected_electrode = "CPz"
 
-# N400 analysis window: 300-500ms
 analysis_window_start = 0.3
 analysis_window_end = 0.5
 
 plot_title = (
-    "Grand Average N400: "
-    "Unrelated vs. Related Word Pairs at Pz"
+    "Grand Average N400: Related versus "
+    "Unrelated Word Pairs at CPz"
 )
 
-# Plot grand averages
+print("Available conditions:", list(grand_avs))
+
 plot_evokeds(
     grand_avs,
     picks=selected_electrode,
-    invert_y=True,          # Negative up (convention for ERPs)
+    invert_y=True,
     title=plot_title,
     vlines=[
-        analysis_window_start, 
+        analysis_window_start,
         analysis_window_end
     ]
-) 
-The grand average ERP at electrode Pz reveals the expected N400 effect. The unrelated word pairs condition shows a more negative deflection compared to the related word pairs condition in the 300-500ms time window, consistent with the N400 component described by @kappenman2021.
+)
 ```
+
+## Results
+
+### Grand average: N400 effect
+
+The grand-average event-related potentials for semantically related and unrelated target words are presented in Figure 1. The analysis focuses on electrode CPz, with the N400 measurement window defined as 300–500 ms after target-word onset.
+
+```{python}
+#| output: true
+
+selected_electrode = "CPz"
+
+plot_title = (
+    "Grand Average N400: Related versus "
+    "Unrelated Word Pairs at CPz"
+)
+
+analysis_window_start = 0.3
+analysis_window_end = 0.5
+
+plot_evokeds(
+    grand_avs,
+    picks=selected_electrode,
+    invert_y=True,
+    title=plot_title,
+    vlines=[
+        analysis_window_start,
+        analysis_window_end
+    ]
+)
+```
+
+**Figure 1.** Grand-average event-related potentials for semantically related and unrelated target words at electrode CPz. Vertical dotted lines indicate the N400 analysis window (300–500 ms). Negative voltage is plotted upward.
+
+**[Complete after generating the graph.]**
+
+Describe the direction and timing of the difference between the two conditions. State whether unrelated targets elicited a more negative waveform than related targets within the 300–500 ms measurement window.
 
 ## Discussion and reflection
 
-Results Summary
-The grand average ERP analysis revealed a clear N400 effect at the centroparietal electrode site Pz. The unrelated word pairs condition elicited a more pronounced negative deflection between 300-500ms post-stimulus compared to the related word pairs condition. This pattern is consistent with the classic N400 effect reported by @kutas1980 and replicated by @kappenman2021.
+The present analysis investigated whether the semantic word-pair task in the ERP CORE dataset elicited the characteristic N400 response. Previous research demonstrates that semantically unrelated targets typically produce a greater negative-going response than related targets, particularly at centroparietal electrode sites during the 300–500 ms post-stimulus interval [@kappenman2021; @kutas2011].
 
-Comparison with Kappenman et al. (2021)
-The observed N400 effect aligns with the findings reported by @kappenman2021 in terms of:
+**[Insert your actual findings here.]** Describe whether the unrelated condition demonstrated greater negativity than the related condition at CPz. Discuss the timing and magnitude of the observed difference and whether the overall pattern was consistent with the findings of Kappenman et al. (2021).
 
-Polarity: Negative deflection as expected
-Latency: Peak around 400ms post-stimulus
-Topography: Maximal at centroparietal sites
-Minor differences in amplitude may be attributable to individual differences in the participant sample or slight variations in task parameters.
+If the expected N400 effect was observed, the result would support previous evidence that semantic context facilitates the processing of related target words, resulting in reduced N400 negativity. Such findings are consistent with theories suggesting that the N400 reflects context-sensitive semantic processing [@lau2008].
 
-Reflections on Learning
-Applying the ERP analysis pipeline to a new dataset provided valuable insights into:
+If the expected effect was reduced or absent, potential explanations include differences in the number of retained participants, artefact rejection, event selection, and preprocessing procedures. The simplified analysis pipeline does not reproduce every stage of the original ERP CORE processing procedure, limiting direct comparisons of waveform amplitudes.
 
-Pipeline implementation: Understanding how preprocessing steps (filtering, re-referencing, artifact rejection) influence the final ERP waveform
-Parameter selection: The importance of selecting appropriate epoch windows and rejection thresholds for specific components
-Data quality: Recognising how artifact rejection affects the number of valid trials per participant
-Reproducibility: The value of structured, documented code for ensuring reproducible analyses
+Applying this analysis to a new dataset demonstrated the importance of methodological decisions in ERP research. In particular, I learned that accurate event identification is essential for interpreting stimulus-locked neural responses. Preprocessing choices, including filtering, referencing and artefact rejection, can also influence waveform morphology and the number of usable trials. The process reinforced the importance of documenting analytical decisions to ensure reproducibility and facilitate meaningful comparisons with published findings.
+
+**[Revise the reflection to describe what you personally learned, and remove whichever conditional interpretation does not match your graph.]**
+
+## Declaration on Generative AI use
+
+Generative AI (ChatGPT, OpenAI) was not used to assist  the report structure
 ## References
 
-*Note: this document is set up to automatically generate a reference list via a bib file. We will look at how to do this in the week 9 workshop.*
+@article{kappenman2021,
+  author = {Kappenman, Emily S. and Farrens, Jaclyn L. and Zhang, Wendy and Stewart, Andrew X. and Luck, Steven J.},
+  title = {{ERP CORE}: An open resource for human event-related potential research},
+  journal = {NeuroImage},
+  year = {2021},
+  volume = {225},
+  pages = {117465},
+  doi = {10.1016/j.neuroimage.2020.117465}
+}
 
+@article{kutas1980,
+  author = {Kutas, Marta and Hillyard, Steven A.},
+  title = {Reading senseless sentences: Brain potentials reflect semantic incongruity},
+  journal = {Science},
+  year = {1980},
+  volume = {207},
+  number = {4427},
+  pages = {203--205},
+  doi = {10.1126/science.7350657}
+}
+
+@article{kutas2011,
+  author = {Kutas, Marta and Federmeier, Kara D.},
+  title = {Thirty years and counting: Finding meaning in the {N400} component of the event-related brain potential ({ERP})},
+  journal = {Annual Review of Psychology},
+  year = {2011},
+  volume = {62},
+  pages = {621--647},
+  doi = {10.1146/annurev.psych.093008.131123}
+}
+
+@article{lau2008,
+  author = {Lau, Ellen F. and Phillips, Colin and Poeppel, David},
+  title = {A cortical network for semantics: (de)constructing the {N400}},
+  journal = {Nature Reviews Neuroscience},
+  year = {2008},
+  volume = {9},
+  pages = {920--933},
+  doi = {10.1038/nrn2532}
+}
