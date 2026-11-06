@@ -14,3 +14,5 @@ data/
 *.docx
 *.xlsx
 *.pdf
+/.quarto/
+**/*.quarto_ipynb
