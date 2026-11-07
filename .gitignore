@@ -7,7 +7,9 @@ data/
 *.fif.gz
 
 # Output files
+# Ignore other HTML files, but publish the website
 *.html
+!docs/index.html
 *.png
 
 # Other files to ignore
