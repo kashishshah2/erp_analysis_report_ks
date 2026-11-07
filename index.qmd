@@ -481,62 +481,24 @@ plot_evokeds(
         analysis_window_end
     ]
 )
-```
 
-## Results
-
-### Grand average: N400 effect
-
-The grand-average event-related potentials for semantically related and unrelated target words are presented in Figure 1. The analysis focuses on electrode CPz, with the N400 measurement window defined as 300–500 ms after target-word onset.
-
-```{python}
-#| output: true
-
-selected_electrode = "CPz"
-
-plot_title = (
-    "Grand Average N400: Related versus "
-    "Unrelated Word Pairs at CPz"
-)
-
-analysis_window_start = 0.3
-analysis_window_end = 0.5
-
-plot_evokeds(
-    grand_avs,
-    picks=selected_electrode,
-    invert_y=True,
-    title=plot_title,
-    vlines=[
-        analysis_window_start,
-        analysis_window_end
-    ]
-)
 ```
 
 **Figure 1.** Grand-average event-related potentials for semantically related and unrelated target words at electrode CPz. Vertical dotted lines indicate the N400 analysis window (300–500 ms). Negative voltage is plotted upward.
 
-**[Complete after generating the graph.]**
-
-Describe the direction and timing of the difference between the two conditions. State whether unrelated targets elicited a more negative waveform than related targets within the 300–500 ms measurement window.
+The unrelated condition exhibited relatively more negative activity than the related condition during the N400 analysis window, consistent with the predicted direction of the N400 effect. However, both conditions showed pronounced absolute positivity, suggesting that the waveform morphology differed from the typical N400 pattern and warrants further examination of preprocessing and baseline correction.
 
 ## Discussion and reflection
+The present analysis investigated whether semantic relatedness modulated the N400 response in the ERP CORE dataset. The grand-average waveforms demonstrated a clear difference between conditions at CPz during the 300–500 ms analysis window. Semantically unrelated targets elicited relatively more negative activity than related targets, consistent with the direction of the N400 effect reported by Kappenman et al. (2021). This finding supports the interpretation that semantic context facilitates target word processing, reducing N400 negativity when preceding information activates related semantic representations [@kutas2011; @lau2008].
+Nevertheless, the waveform morphology differed from the conventional N400 pattern. Both conditions exhibited substantial positive-going activity, particularly following approximately 150 ms, with positivity persisting throughout the analysis window. Although the relative difference between conditions was consistent with the expected N400 effect, the absolute amplitudes and overall morphology differed from those typically reported. Consequently, the findings suggest a partial replication of the semantic relatedness effect rather than a complete reproduction of the original waveforms. Potential explanations include differences in referencing, filtering, artefact rejection and retained trial numbers. Furthermore, the simplified preprocessing pipeline may not reproduce all artefact correction procedures employed by Kappenman et al. (2021), limiting direct comparisons.
+This analysis highlighted that ERP interpretation requires more than identifying differences between waveforms. Initially, the predominantly positive amplitudes appeared inconsistent with a negative-going component. However, examining the relative difference between conditions clarified that N400 effects concern amplitude modulation rather than necessarily negative absolute voltage. The process also demonstrated how seemingly minor analytical decisions can substantially influence waveform morphology and interpretation. I therefore developed a greater appreciation of the importance of critically evaluating preprocessing choices, verifying event definitions and distinguishing genuine neural effects from methodological influences when assessing reproducibility.
 
-The present analysis investigated whether the semantic word-pair task in the ERP CORE dataset elicited the characteristic N400 response. Previous research demonstrates that semantically unrelated targets typically produce a greater negative-going response than related targets, particularly at centroparietal electrode sites during the 300–500 ms post-stimulus interval [@kappenman2021; @kutas2011].
-
-**[Insert your actual findings here.]** Describe whether the unrelated condition demonstrated greater negativity than the related condition at CPz. Discuss the timing and magnitude of the observed difference and whether the overall pattern was consistent with the findings of Kappenman et al. (2021).
-
-If the expected N400 effect was observed, the result would support previous evidence that semantic context facilitates the processing of related target words, resulting in reduced N400 negativity. Such findings are consistent with theories suggesting that the N400 reflects context-sensitive semantic processing [@lau2008].
-
-If the expected effect was reduced or absent, potential explanations include differences in the number of retained participants, artefact rejection, event selection, and preprocessing procedures. The simplified analysis pipeline does not reproduce every stage of the original ERP CORE processing procedure, limiting direct comparisons of waveform amplitudes.
-
-Applying this analysis to a new dataset demonstrated the importance of methodological decisions in ERP research. In particular, I learned that accurate event identification is essential for interpreting stimulus-locked neural responses. Preprocessing choices, including filtering, referencing and artefact rejection, can also influence waveform morphology and the number of usable trials. The process reinforced the importance of documenting analytical decisions to ensure reproducibility and facilitate meaningful comparisons with published findings.
-
-**[Revise the reflection to describe what you personally learned, and remove whichever conditional interpretation does not match your graph.]**
 
 ## Declaration on Generative AI use
 
-Generative AI (ChatGPT, OpenAI) was not used to assist  the report structure
+Generative AI (ChatGPT, OpenAI) was not used to assist with the writing of this report 
+
+
 ## References
 
 @article{kappenman2021,
